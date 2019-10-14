@@ -8,7 +8,7 @@
  */
 package com.twiliorn.library;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
@@ -50,6 +50,7 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
     private static final int TOGGLE_SOUND_SETUP = 8;
     private static final int TOGGLE_REMOTE_SOUND = 9;
     private static final int RELEASE_RESOURCE = 10;
+    private static final int TOGGLE_REMOTE_SOUND_SUPERVISOR = 11;
 
     @Override
     public String getName() {
@@ -103,6 +104,10 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
             case RELEASE_RESOURCE:
                 view.releaseResource();
                 break;
+            case TOGGLE_REMOTE_SOUND_SUPERVISOR:
+                Boolean remoteAudioEnabledSupervisor = args.getBoolean(0);
+                view.toggleRemoteAudioSupervisor(remoteAudioEnabledSupervisor);
+                break;
         }
     }
 
@@ -149,6 +154,7 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
                 .put("getStats", GET_STATS)
                 .put("disableOpenSLES", DISABLE_OPENSL_ES)
                 .put("toggleRemoteSound", TOGGLE_REMOTE_SOUND)
+                .put("toggleRemoteSupervisor", TOGGLE_REMOTE_SOUND_SUPERVISOR)
                 .build();
     }
 }

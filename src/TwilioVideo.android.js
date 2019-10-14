@@ -126,7 +126,9 @@ const nativeEvents = {
   disableOpenSLES: 7,
   toggleSoundSetup: 8,
   toggleRemoteSound: 9,
-  releaseResource: 10
+  releaseResource: 10,
+  toggleRemoteSupervisor: 11,
+
 }
 
 class CustomTwilioVideoView extends Component {
@@ -170,6 +172,11 @@ class CustomTwilioVideoView extends Component {
 
   setRemoteAudioEnabled (enabled) {
     this.runCommand(nativeEvents.toggleRemoteSound, [enabled])
+    return Promise.resolve(enabled)
+  }
+
+  setRemoteAudioEnabledSupervisor (enabled) {
+    this.runCommand(nativeEvents.toggleRemoteSupervisor, [enabled,"supervisor"])
     return Promise.resolve(enabled)
   }
 
