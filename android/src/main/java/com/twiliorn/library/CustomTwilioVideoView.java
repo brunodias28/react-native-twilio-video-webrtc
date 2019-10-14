@@ -532,16 +532,6 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
                         }
                     }                
                 }
-                    }                
-                }
-                    }                
-        }
-                    }                
-                }
-                    }                
-        }
-                    }                
-                }
             }
         }
     }
@@ -668,7 +658,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
 
                 WritableArray participantsArray = new WritableNativeArray();
                 for (RemoteParticipant participant : participants) {
-                    participantsArray.pushMap(buildParticipant(participant));
+                    participantsArray.pushMap(buildParticipant(participant));                    
                 }
                 event.putArray("participants", participantsArray);
 
@@ -745,18 +735,19 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
      * Called when participant joins the room
      */
     private void addParticipant(Room room, RemoteParticipant participant) {
-
+        
         WritableMap event = new WritableNativeMap();
         event.putString("roomName", room.getName());
         event.putString("roomSid", room.getSid());
         event.putMap("participant", buildParticipant(participant));
-
+        
         pushEvent(this, ON_PARTICIPANT_CONNECTED, event);
 
         /*
-         * Start listening for participant media events
-         */
+            * Start listening for participant media events
+            */
         participant.setListener(mediaListener());
+        
     }
 
     /*
@@ -779,40 +770,15 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
         return new RemoteParticipant.Listener() {
             @Override
             public void onAudioTrackSubscribed(RemoteParticipant participant, RemoteAudioTrackPublication publication, RemoteAudioTrack audioTrack) {
-              audioTrack.enablePlayback(enableRemoteAudio);
-              WritableMap event = buildParticipantVideoEvent(participant, publication);
+                audioTrack.enablePlayback(enableRemoteAudio);
+                WritableMap event = buildParticipantVideoEvent(participant, publication);
                 pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_ADDED_AUDIO_TRACK, event);                
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_ADDED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_ADDED_AUDIO_TRACK, event);                
+                
             }
 
             @Override
             public void onAudioTrackUnsubscribed(RemoteParticipant participant, RemoteAudioTrackPublication publication, RemoteAudioTrack audioTrack) {                
                 WritableMap event = buildParticipantVideoEvent(participant, publication);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
-                pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
-              pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);
                 pushEvent(CustomTwilioVideoView.this, ON_PARTICIPANT_REMOVED_AUDIO_TRACK, event);                                    
             }
 
@@ -909,7 +875,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
             }
         };
     }
-    //aki
+
     private WritableMap buildParticipant(Participant participant) {
         WritableMap participantMap = new WritableNativeMap();
         participantMap.putString("identity", participant.getIdentity());
