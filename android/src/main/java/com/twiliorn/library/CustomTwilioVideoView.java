@@ -240,7 +240,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
             if (thumbnailVideoView != null && localVideoTrack != null) {
                 localVideoTrack.addRenderer(thumbnailVideoView);
             }
-            setThumbnailMirror();
+            // setThumbnailMirror();
         }
         connectToRoom(enableAudio);
     }
@@ -518,6 +518,7 @@ public class CustomTwilioVideoView extends View implements LifecycleEventListene
                     }
                 }
             }
+            toggleSoundSetup(true);
         }
     }
 
