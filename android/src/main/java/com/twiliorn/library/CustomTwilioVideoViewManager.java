@@ -26,6 +26,9 @@ import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_DISCONNECTED;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_CONNECTED;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_DISCONNECTED;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_VIDEO_CHANGED;
+import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_REMOVED_DATA_TRACK;
+import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_ADDED_DATA_TRACK;
+import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_DATATRACK_MESSAGE_RECEIVED;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_ADDED_VIDEO_TRACK;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_REMOVED_VIDEO_TRACK;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_ADDED_AUDIO_TRACK;
@@ -35,6 +38,7 @@ import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_D
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_ENABLED_AUDIO_TRACK;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_PARTICIPANT_DISABLED_AUDIO_TRACK;
 import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_STATS_RECEIVED;
+import static com.twiliorn.library.CustomTwilioVideoView.Events.ON_NETWORK_QUALITY_LEVELS_CHANGED;
 
 
 public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilioVideoView> {
@@ -50,7 +54,11 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
     private static final int TOGGLE_SOUND_SETUP = 8;
     private static final int TOGGLE_REMOTE_SOUND = 9;
     private static final int RELEASE_RESOURCE = 10;
-    private static final int TOGGLE_REMOTE_SOUND_SUPERVISOR = 11;
+    private static final int TOGGLE_BLUETOOTH_HEADSET = 11;
+    private static final int SEND_STRING = 12;
+    private static final int PUBLISH_VIDEO = 13;
+    private static final int PUBLISH_AUDIO = 14;
+    private static final int TOGGLE_REMOTE_SOUND_SUPERVISOR = 15;
 
     @Override
     public String getName() {
@@ -71,7 +79,8 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
                 boolean enableAudio = args.getBoolean(2);
                 boolean enableVideo = args.getBoolean(3);
                 boolean enableRemoteAudio = args.getBoolean(4);
-                view.connectToRoomWrapper(roomName, accessToken, enableAudio, enableVideo, enableRemoteAudio);
+                boolean enableNetworkQualityReporting = args.getBoolean(5);
+                view.connectToRoomWrapper(roomName, accessToken, enableAudio, enableVideo, enableRemoteAudio, enableNetworkQualityReporting);
                 break;
             case DISCONNECT:
                 view.disconnect();
@@ -104,6 +113,19 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
             case RELEASE_RESOURCE:
                 view.releaseResource();
                 break;
+            case TOGGLE_BLUETOOTH_HEADSET:
+                Boolean headsetEnabled = args.getBoolean(0);
+                view.toggleBluetoothHeadset(headsetEnabled);
+                break;
+            case SEND_STRING:
+                view.sendString(args.getString(0));
+                break;
+            case PUBLISH_VIDEO:
+                view.publishLocalVideo(args.getBoolean(0));
+                break;
+            case PUBLISH_AUDIO:
+                view.publishLocalAudio(args.getBoolean(0));
+                break;
             case TOGGLE_REMOTE_SOUND_SUPERVISOR:
                 Boolean remoteAudioEnabledSupervisor = args.getBoolean(0);
                 view.toggleRemoteAudioSupervisor(remoteAudioEnabledSupervisor);
@@ -126,17 +148,25 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
 
         map.putAll(MapBuilder.of(
                 ON_PARTICIPANT_DISCONNECTED, MapBuilder.of("registrationName", ON_PARTICIPANT_DISCONNECTED),
+                ON_DATATRACK_MESSAGE_RECEIVED, MapBuilder.of("registrationName", ON_DATATRACK_MESSAGE_RECEIVED),
+                ON_PARTICIPANT_ADDED_DATA_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_ADDED_DATA_TRACK),
                 ON_PARTICIPANT_ADDED_VIDEO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_ADDED_VIDEO_TRACK),
                 ON_PARTICIPANT_REMOVED_VIDEO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_REMOVED_VIDEO_TRACK),
                 ON_PARTICIPANT_ADDED_AUDIO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_ADDED_AUDIO_TRACK),
                 ON_PARTICIPANT_REMOVED_AUDIO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_REMOVED_AUDIO_TRACK)
         ));
+
+        map.putAll(MapBuilder.of(
+                ON_PARTICIPANT_REMOVED_DATA_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_REMOVED_DATA_TRACK)
+        ));
+
         map.putAll(MapBuilder.of(
                 ON_PARTICIPANT_ENABLED_VIDEO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_ENABLED_VIDEO_TRACK),
                 ON_PARTICIPANT_DISABLED_VIDEO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_DISABLED_VIDEO_TRACK),
                 ON_PARTICIPANT_ENABLED_AUDIO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_ENABLED_AUDIO_TRACK),
                 ON_PARTICIPANT_DISABLED_AUDIO_TRACK, MapBuilder.of("registrationName", ON_PARTICIPANT_DISABLED_AUDIO_TRACK),
-                ON_STATS_RECEIVED, MapBuilder.of("registrationName", ON_STATS_RECEIVED)
+                ON_STATS_RECEIVED, MapBuilder.of("registrationName", ON_STATS_RECEIVED),
+                ON_NETWORK_QUALITY_LEVELS_CHANGED, MapBuilder.of("registrationName", ON_NETWORK_QUALITY_LEVELS_CHANGED)
         ));
 
         return map;
@@ -154,6 +184,8 @@ public class CustomTwilioVideoViewManager extends SimpleViewManager<CustomTwilio
                 .put("getStats", GET_STATS)
                 .put("disableOpenSLES", DISABLE_OPENSL_ES)
                 .put("toggleRemoteSound", TOGGLE_REMOTE_SOUND)
+                .put("toggleBluetoothHeadset", TOGGLE_BLUETOOTH_HEADSET)
+                .put("sendString", SEND_STRING)
                 .put("toggleRemoteSupervisor", TOGGLE_REMOTE_SOUND_SUPERVISOR)
                 .build();
     }
